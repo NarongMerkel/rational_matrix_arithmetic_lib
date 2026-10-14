@@ -29,3 +29,10 @@ Floating-point matrix code quietly loses precision on matrices that are ill-cond
 ## Edge you will hit
 
 `Fraction` accepts `str` like `"2/3"` as well as `int` and `Fraction` at construction time, which is convenient but means a typo like `"1 /2"` (with a stray space) will raise `ValueError` from the standard library, not from this library. Construct from `int` or `Fraction` if you want stricter input control. Singular matrices are detected during elimination, not pre-checked, so `inverse()` on a singular matrix raises `MatrixSingularError` rather than returning a sentinel.
+
+## Design notes
+
+The window stores values eagerly rather than keeping running aggregates. Running
+sums drift with floating point over long streams, and recomputing from a small
+buffer is cheap enough that the drift is not worth the speed.
+
